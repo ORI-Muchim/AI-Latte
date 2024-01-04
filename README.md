@@ -1,4 +1,4 @@
-- # AI-LATTE
+# AI-LATTE
 
 Implementation of a CHATBOT Using [MB-iSTFT-VITS](https://github.com/ORI-Muchim/MB-iSTFT-VITS-Korean) and [ChatGPT](https://chat.openai.com/)
 
