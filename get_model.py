@@ -12,10 +12,3 @@ def download_file_if_not_exists(url, local_path):
         file.write(response.content)
 
     return f"모델 저장됨: {local_path}"
-
-url = 'https://github.com/ORI-Muchim/AI-Latte/releases/download/v1.0/G_107000.pth'
-
-local_path = './models/latte/G_107000.pth'
-
-result = download_file_if_not_exists(url, local_path)
-print(result)

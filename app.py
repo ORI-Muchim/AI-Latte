@@ -7,11 +7,19 @@ from gpt import start_chat_gpt, send_message, get_latest_response
 import undetected_chromedriver as uc
 
 from inference import voice_gen
+from get_model import download_file_if_not_exists
 
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLineEdit, QTextEdit
 from PyQt5.QtGui import QPixmap, QPainter, QIcon, QFont, QFontDatabase, QFontInfo, QTextCursor
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtCore import Qt, QUrl, QTimer, QThread, pyqtSignal
+
+url = 'https://github.com/ORI-Muchim/AI-Latte/releases/download/v1.0/G_107000.pth'
+
+local_path = './models/latte/G_107000.pth'
+
+result = download_file_if_not_exists(url, local_path)
+print(result)
 
 driver = uc.Chrome(enable_cdp_events=True)
 start_chat_gpt(driver)

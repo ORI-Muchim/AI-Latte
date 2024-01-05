@@ -18,4 +18,4 @@ webdriver_manager
 undetected_chromedriver
 selenium
 winsound
-BeautifulSoup
+requests
