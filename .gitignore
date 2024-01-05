@@ -1,3 +1,5 @@
-**/models
+/models/latte/D_107000.pth
+/models/latte/G_107000.pth
+/models/latte/train.log
 **/*.pyc
 **/__pycache__
