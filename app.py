@@ -2,8 +2,6 @@ import os
 import time
 import random
 import sys
-from playsound import playsound
-import threading
 
 from gpt import start_chat_gpt, send_message, get_latest_response
 import undetected_chromedriver as uc

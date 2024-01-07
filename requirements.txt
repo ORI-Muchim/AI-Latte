@@ -17,5 +17,4 @@ PyQt5
 webdriver_manager
 undetected_chromedriver
 selenium
-playsound==1.2.2
 requests
