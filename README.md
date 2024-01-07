@@ -1,5 +1,7 @@
 # AI-LATTE
 
+# The repository is only accessible to people aged 19 and over. *PLEASE DO NOT CHECK* the repository for teenagers or children, and please come back when you are old.
+
 Implementation of a CHATBOT Using [MB-iSTFT-VITS](https://github.com/ORI-Muchim/MB-iSTFT-VITS-Korean) and [ChatGPT](https://chat.openai.com/)
 
 ![Sample Output](./src/1.png)
