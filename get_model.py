@@ -1,7 +1,7 @@
 import requests
 import os
 
-def download_file_if_not_exists(url, local_path):
+def download_model_if_not_exists(url, local_path):
     if os.path.exists(local_path):
         return "모델 파일이 있습니다."
 
