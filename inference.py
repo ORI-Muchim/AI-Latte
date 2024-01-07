@@ -49,4 +49,3 @@ def voice_gen(response):
         audio = net_g.infer(x_tst, x_tst_lengths, noise_scale=.667, noise_scale_w=0.8, length_scale=1)[0][0,0].data.cpu().float().numpy()
         write(f'{output_dir}/{speaker}.wav', hps.data.sampling_rate, audio)
         print(f'{output_dir}/{speaker}.wav Generated!')
-        print("\n")

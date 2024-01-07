@@ -1,6 +1,7 @@
+import os
 import time
 import sys
-import winsound
+from playsound import playsound
 import threading
 
 from gpt import start_chat_gpt, send_message, get_latest_response
@@ -24,6 +25,18 @@ print(result)
 driver = uc.Chrome(enable_cdp_events=True)
 start_chat_gpt(driver)
 
+class VoiceGenThread(QThread):
+    finished = pyqtSignal(str)
+
+    def __init__(self, response):
+        super().__init__()
+        self.response = response
+
+    def run(self):
+        voice_gen(self.response)
+        audioPath = "./vitsoutput/latte/latte.wav"
+        self.finished.emit(audioPath)
+
 class ApiThread(QThread):
     responseSignal = pyqtSignal(str)
 
@@ -35,7 +48,7 @@ class ApiThread(QThread):
         send_message(driver, self.message)
         response = get_latest_response(driver)
         self.responseSignal.emit(response)
-        print("응답: ", response)
+        print("응답:", response, end="")
 
 class ChatBotUI(QWidget):
     def __init__(self):
@@ -44,6 +57,7 @@ class ChatBotUI(QWidget):
         self.initMediaPlayer()
         self.currentText = ""
         self.currentHtml = ""
+        self.soundPlayer = QMediaPlayer()
 
     def initMediaPlayer(self):
         self.player = QMediaPlayer()
@@ -90,13 +104,25 @@ class ChatBotUI(QWidget):
         self.setLayout(layout)
         self.resize(1536, 864)
     
-    def playSound(self):
-        winsound.PlaySound(self.audioPath, winsound.SND_FILENAME)
+    def playSound(self, audioPath):
+        if os.path.exists(audioPath):
+            url = QUrl.fromLocalFile(audioPath)
+            self.soundPlayer.setMedia(QMediaContent(url))
+            self.soundPlayer.stateChanged.connect(lambda: self.deleteAudioFile(audioPath))
+            self.soundPlayer.play()
+            
+    def deleteAudioFile(self, audioPath):
+        if self.soundPlayer.state() == QMediaPlayer.StoppedState:
+            try:
+                os.remove(audioPath)
+                print(f"Deleted audio file: {audioPath}")
+            except Exception as e:
+                print("\n")
 
     def sendMessage(self):
         message = self.userInput.text()
         if message:
-            print("내가 보낸 메시지: ", message)
+            print("내가 보낸 메시지:", message)
             self.chatHistory.clear()
             self.chatHistory.append("<span style='color: white;'>" + "현수: " + message + "</span>")
             self.userInput.clear()
@@ -109,14 +135,19 @@ class ChatBotUI(QWidget):
         self.apiThread.start()
 
     def displayResponse(self, response):
-        self.animateText("<span style='color: peachpuff;'>" + "권라떼: " + response + "</span>", "peachpuff", "./vitsoutput/latte/latte.wav")
-        voice_gen(response)
+        self.animateText("<span style='color: peachpuff;'>" + "권라떼: " + response + "</span>", "peachpuff")
+        self.voiceThread = VoiceGenThread(response)
+        self.voiceThread.finished.connect(self.playVoiceAfterDelay)
+        self.voiceThread.start()
+        print()
         
-    def animateText(self, text, color, audioPath):
+    def playVoiceAfterDelay(self, audioPath):
+        QTimer.singleShot(250, lambda: self.playSound(audioPath))
+        
+    def animateText(self, text, color):
         self.currentHtml = self.chatHistory.toHtml()
         self.fullText = "<span style='color: {};'>{}</span>".format(color, text)
         self.textIndex = 0
-        self.audioPath = audioPath
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.addLetter)
         self.timer.start(18)
@@ -128,7 +159,6 @@ class ChatBotUI(QWidget):
             self.chatHistory.setHtml(self.currentHtml)
         else:
             self.timer.stop()
-            threading.Thread(target=self.playSound).start()
 
     def resizeEvent(self, event):
         super().resizeEvent(event)

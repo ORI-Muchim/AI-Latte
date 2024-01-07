@@ -1,6 +1,10 @@
 import time
+import logging
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
 
 def start_chat_gpt(driver):
@@ -21,11 +25,30 @@ def send_message(driver, message):
         print("ChatGPT에 로그인 되어있지 같습니다. 프로그램 종료 후 다시 시도하세요.")
         driver.quit()
 
-def get_latest_response(driver):
+def is_element_visible(driver, element_xpath):
     try:
-        time.sleep(16)
-        responses = driver.find_elements(By.CSS_SELECTOR, ".markdown.prose.w-full.break-words.dark\\:prose-invert.dark")
-        return responses[-1].text if responses else None
-    except Exception as e:
-        print(f"Error getting latest response: {e}")
-        return None
+        visible = driver.execute_script(
+            "var elem = document.evaluate(arguments[0], document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue; return (elem != null) && (elem.offsetWidth > 0 || elem.offsetHeight > 0);",
+            element_xpath)
+        return visible
+    except:
+        return False
+
+def get_latest_response(driver):
+    max_attempts = 60
+    attempt = 0
+
+    button_xpath = "//*[@data-testid='send-button']"
+    response_xpath = "//*[@class='markdown prose w-full break-words dark:prose-invert dark']"
+
+    while attempt < max_attempts:
+        if is_element_visible(driver, button_xpath):
+            time.sleep(1)
+            responses = driver.find_elements(By.XPATH, response_xpath)
+            print(f"Attempt {attempt + 1} of {max_attempts}: Waiting for the button to become visible again.")
+            return responses[-1].text if responses else "응답 오류야. 알겠어?"
+        else:
+            time.sleep(1)
+            attempt += 1
+
+    return "응답 오류야. 알겠어?"
