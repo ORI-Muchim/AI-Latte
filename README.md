@@ -15,7 +15,7 @@ Implementation of a CHATBOT Using [MB-iSTFT-VITS](https://github.com/ORI-Muchim/
 
 ## Prerequisites
 - ChatGPT4
-- A Windows system with a minimum of `16GB` RAM.
+- A Windows / Linux / MacOS system with a minimum of `8GB` RAM.
 - Python == 3.8
 - Anaconda installed.
 - PyTorch installed.
