@@ -20,9 +20,14 @@ Implementation of a CHATBOT Using [MB-iSTFT-VITS](https://github.com/ORI-Muchim/
 - Anaconda installed.
 - PyTorch installed.
 
-Pytorch install command:
+Pytorch install command(For CUDA user):
 ```sh
 pip install torch==1.13.1+cu117 torchvision==0.14.1+cu117 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu117
+```
+
+Pytorch install command(For CPU user):
+```sh
+pip install torch==1.13.1+cpu torchvision==0.14.1+cpu torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cpu
 ```
 
 ---
