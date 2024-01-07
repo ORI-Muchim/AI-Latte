@@ -1,5 +1,6 @@
 import os
 import time
+import random
 import sys
 from playsound import playsound
 import threading
@@ -45,8 +46,13 @@ class ApiThread(QThread):
         self.message = message
 
     def run(self):
-        send_message(driver, self.message)
-        response = get_latest_response(driver)
+        if "섹스" in self.message:
+            responses = ["뭐? 섹스? 야! 섹스? 너 방금 섹스라고 했냐?", "섹스? 야, 섹스? 너 방금 섹스라고 했냐?"]
+            response = random.choice(responses)
+        else:
+            send_message(driver, self.message)
+            response = get_latest_response(driver)
+        
         self.responseSignal.emit(response)
         print("응답:", response, end="")
 
