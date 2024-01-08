@@ -2,6 +2,8 @@
 
 # 해당 레포지토리는 19세 이상만 접근할 수 있습니다. 청소년이나 어린이는 이 레포지토리를 접근하지 마십시오. ㅠㅠ
 
+[Original README.md](./README.md)
+
 온파이어 게임즈의 러브 딜리버리 히로인 권라떼, [ChatGPT](https://chat.openai.com/)와 [MB-iSTFT-VITS](https://github.com/ORI-Muchim/MB-iSTFT-VITS-Korean)를 사용한 비공식 구현
 
 ![Sample Output](./src/1.png)
