@@ -53,4 +53,3 @@ def voice_gen(response):
         write(filename, hps.data.sampling_rate, audio)
         print(f'{filename} Generated!')
         return filename
-
