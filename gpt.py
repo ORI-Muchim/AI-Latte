@@ -40,6 +40,8 @@ def get_latest_response(driver):
 
     button_xpath = "//*[@data-testid='send-button']"
     response_xpath = "//*[@class='markdown prose w-full break-words dark:prose-invert dark']"
+    
+    time.sleep(3)
 
     while attempt < max_attempts:
         if is_element_visible(driver, button_xpath):
