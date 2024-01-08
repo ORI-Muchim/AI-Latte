@@ -32,8 +32,7 @@ class VoiceGenThread(QThread):
         self.response = response
 
     def run(self):
-        voice_gen(self.response)
-        audioPath = "./vitsoutput/latte/latte.wav"
+        audioPath = voice_gen(self.response)
         self.finished.emit(audioPath)
 
 class ApiThread(QThread):
