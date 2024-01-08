@@ -21,8 +21,8 @@ local_path = './models/latte/G_107000.pth'
 result = download_model_if_not_exists(url, local_path)
 print(result)
 
-driver = uc.Chrome(enable_cdp_events=True)
-start_chat_gpt(driver)
+#driver = uc.Chrome(enable_cdp_events=True)
+#start_chat_gpt(driver)
 
 class VoiceGenThread(QThread):
     finished = pyqtSignal(str)
@@ -47,8 +47,9 @@ class ApiThread(QThread):
             responses = ["뭐? 섹스? 야! 섹스? 너 방금 섹스라고 했냐?", "섹스? 야, 섹스? 너 방금 섹스라고 했냐?"]
             response = random.choice(responses)
         else:
-            send_message(driver, self.message)
-            response = get_latest_response(driver)
+            #send_message(driver, self.message)
+            #response = get_latest_response(driver)
+            response = '헌수야, 드럼통 들어가자.'
         
         self.responseSignal.emit(response)
         print("응답:", response, end="")
@@ -64,7 +65,7 @@ class ChatBotUI(QWidget):
 
     def initMediaPlayer(self):
         self.player = QMediaPlayer()
-        self.player.setMedia(QMediaContent(QUrl.fromLocalFile("bgm.wav")))
+        self.player.setMedia(QMediaContent(QUrl.fromLocalFile("./resource/bgm.wav")))
         self.player.setVolume(5)
         
         self.player.mediaStatusChanged.connect(self.repeatMusic)
@@ -77,7 +78,7 @@ class ChatBotUI(QWidget):
 
     def initUI(self):
         self.setWindowTitle('AI-Latte Chat UI')
-        self.pixmap = QPixmap('back.png')
+        self.pixmap = QPixmap('./resource/back.png')
         self.setWindowIcon(QIcon('icon.png'))
         
         fontInfo = QFontInfo(self.font())
@@ -183,7 +184,7 @@ if __name__ == '__main__':
         else:
             font_families = QFontDatabase.applicationFontFamilies(font_id)
             if font_families:
-                font = QFont(font_families[0], 25)
+                font = QFont(font_families[0], 27)
                 app.setFont(font)
 
         ex = ChatBotUI()

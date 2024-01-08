@@ -82,3 +82,5 @@ For more information, please refer to the following repositories:
 - [ORI-Muchim/MB-iSTFT-VITS-Korean](https://github.com/ORI-Muchim/MB-iSTFT-VITS-Korean)
 - [ORI-Muchim/PolyLangVITS](https://github.com/ORI-Muchim/PolyLangVITS)
 - [tenebo/g2pk2](https://github.com/tenebo/g2pk2)
+
+This project reveals that it was not created for commercial purposes, but for simple research purposes.

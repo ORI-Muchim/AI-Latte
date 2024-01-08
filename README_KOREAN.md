@@ -82,3 +82,5 @@ python app.py
 - [ORI-Muchim/MB-iSTFT-VITS-Korean](https://github.com/ORI-Muchim/MB-iSTFT-VITS-Korean)
 - [ORI-Muchim/PolyLangVITS](https://github.com/ORI-Muchim/PolyLangVITS)
 - [tenebo/g2pk2](https://github.com/tenebo/g2pk2)
+
+이 프로젝트는 영리적 목적으로 생성된 것이 아닌, 단순 연구용으로 만든 것을 밝힙니다.
