@@ -49,7 +49,7 @@ class ApiThread(QThread):
         else:
             #send_message(driver, self.message)
             #response = get_latest_response(driver)
-            response = '헌수야, 드럼통 들어가자.'
+            response = '야, 씹덕. 여기서 뭐하고 있어.'
         
         self.responseSignal.emit(response)
         print("응답:", response, end="")
@@ -62,6 +62,8 @@ class ChatBotUI(QWidget):
         self.currentText = ""
         self.currentHtml = ""
         self.soundPlayer = QMediaPlayer()
+        self.foregroundPixmap = None
+        self.faceImagePath = './resource/face/normal.png'
         self.displayRandomImage()
 
     def initMediaPlayer(self):
@@ -120,19 +122,32 @@ class ChatBotUI(QWidget):
     def displayRandomImage(self):
         self.setAppBackground('./resource/back.png')
         characterFolder = './resource/clothes'
+        faceImage = './resource/face/normal.png'
 
         try:
             images = [os.path.join(characterFolder, f) for f in os.listdir(characterFolder) if os.path.isfile(os.path.join(characterFolder, f))]
             
             if images:
                 randomCharacter = random.choice(images)
-                self.setCharacterImage(randomCharacter)
+                self.setCharacterImage(randomCharacter, faceImage)
 
         except Exception as e:
             print(f"Error loading random character image: {e}")
 
-    def setCharacterImage(self, imagePath):
-        self.setAppForeground(imagePath)
+    def setCharacterImage(self, characterImagePath, faceImagePath):
+        characterImage = QImage(characterImagePath)
+        characterPixmap = QPixmap.fromImage(characterImage)
+
+        faceImage = QImage(faceImagePath)
+        facePixmap = QPixmap.fromImage(faceImage)
+
+        painter = QPainter(characterPixmap)
+
+        painter.drawPixmap(17, -120, facePixmap)
+        painter.end()
+
+        self.foregroundPixmap = characterPixmap
+        self.update()
         
     def selectImage(self):
         options = QFileDialog.Options()
@@ -146,9 +161,17 @@ class ChatBotUI(QWidget):
         self.update()
 
     def setAppForeground(self, imagePath):
-        image = QImage(imagePath)
+        characterImage = QImage(imagePath)
+        characterPixmap = QPixmap.fromImage(characterImage)
 
-        self.foregroundPixmap = QPixmap.fromImage(image)
+        faceImage = QImage(self.faceImagePath)
+        facePixmap = QPixmap.fromImage(faceImage)
+
+        painter = QPainter(characterPixmap)
+        painter.drawPixmap(20, -120, facePixmap)
+        painter.end()
+
+        self.foregroundPixmap = characterPixmap
         self.update()
 
     def paintEvent(self, event):
