@@ -2,10 +2,13 @@
 
 # The repository is only accessible to people aged 19 and over. *PLEASE DO NOT CHECK* the repository for teenagers or children.
 
-Implementation of a CHATBOT Using [MB-iSTFT-VITS](https://github.com/ORI-Muchim/MB-iSTFT-VITS-Korean) and [ChatGPT](https://chat.openai.com/)
+README.MD
+
+[한국어](./README_Korean.md)
+
+Onfire Games's Love Delivery Heroine Latte, An Unofficial Implementation of [ChatGPT](https://chat.openai.com/) and [MB-iSTFT-VITS](https://github.com/ORI-Muchim/MB-iSTFT-VITS-Korean)
 
 ![Sample Output](./src/1.png)
-
 
 ## Table of Contents 
 - [Prerequisites](#prerequisites)
@@ -14,7 +17,7 @@ Implementation of a CHATBOT Using [MB-iSTFT-VITS](https://github.com/ORI-Muchim/
 - [References](#references)
 
 ## Prerequisites
-- ChatGPT4
+- **ChatGPT4**
 - A Windows / Linux / MacOS system with a minimum of `8GB` RAM.
 - Python == 3.8
 - Anaconda installed.
