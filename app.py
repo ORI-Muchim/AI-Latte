@@ -120,7 +120,7 @@ class ChatBotUI(QWidget):
                 os.remove(audioPath)
                 print(f"Deleted audio file: {audioPath}")
             except Exception as e:
-                print("\n")
+                print("")
 
     def sendMessage(self):
         message = self.userInput.text()
