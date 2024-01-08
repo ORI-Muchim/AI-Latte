@@ -9,10 +9,10 @@ import undetected_chromedriver as uc
 from inference import voice_gen
 from get_model import download_model_if_not_exists
 
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLineEdit, QTextEdit
-from PyQt5.QtGui import QPixmap, QPainter, QIcon, QFont, QFontDatabase, QFontInfo, QTextCursor
-from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
-from PyQt5.QtCore import Qt, QUrl, QTimer, QThread, pyqtSignal
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtMultimedia import *
+from PyQt5.QtCore import *
 
 url = 'https://github.com/ORI-Muchim/AI-Latte/releases/download/v1.0/G_107000.pth'
 
@@ -62,6 +62,7 @@ class ChatBotUI(QWidget):
         self.currentText = ""
         self.currentHtml = ""
         self.soundPlayer = QMediaPlayer()
+        self.displayRandomImage()
 
     def initMediaPlayer(self):
         self.player = QMediaPlayer()
@@ -79,34 +80,84 @@ class ChatBotUI(QWidget):
     def initUI(self):
         self.setWindowTitle('AI-Latte Chat UI')
         self.pixmap = QPixmap('./resource/back.png')
-        self.setWindowIcon(QIcon('icon.png'))
+        self.setWindowIcon(QIcon('./resource/icon.png'))
         
+        mainLayout = QVBoxLayout(self)
+
         fontInfo = QFontInfo(self.font())
         print("Current font:", fontInfo.family(), "Size:", fontInfo.pointSize())
         print("\n")
-        
-        white_text_style = "color: white;"
-        transparent_style = "background-color: rgba(0, 0, 0, 127);"
-        no_border_style = "border: none;"
+
+        text_style = "background-color: rgba(0, 0, 0, 127); color: white; border: none;"
 
         self.chatHistory = QTextEdit()
         self.chatHistory.setReadOnly(True)
-        self.chatHistory.setStyleSheet(transparent_style + white_text_style + no_border_style)
+        self.chatHistory.setStyleSheet(text_style)
+        mainLayout.addWidget(self.chatHistory, 1)
 
         self.userInput = QLineEdit()
         self.userInput.setPlaceholderText("메시지를 입력하세요.")
-        self.userInput.setFixedHeight(40)
-        self.userInput.setStyleSheet(transparent_style + white_text_style + no_border_style)
+        self.userInput.setStyleSheet(text_style)
         self.userInput.returnPressed.connect(self.sendMessage)
-        QTimer.singleShot(100, self.userInput.setFocus)
+        mainLayout.addWidget(self.userInput, 1)
 
-        layout = QVBoxLayout()
-        layout.addStretch(1)
-        layout.addWidget(self.chatHistory, 1)
-        layout.addWidget(self.userInput, 1)
+        topLayout = QHBoxLayout()
+        self.selectImageButton = QPushButton("Select Image", self)
+        self.selectImageButton.clicked.connect(self.selectImage)
+        topLayout.addWidget(self.selectImageButton, 0, Qt.AlignRight | Qt.AlignTop)
+        mainLayout.addLayout(topLayout)
 
-        self.setLayout(layout)
+        self.imageLabel = QLabel(self)
+        mainLayout.addWidget(self.imageLabel)
+
+        mainLayout.addWidget(self.chatHistory, 1)
+        mainLayout.addWidget(self.userInput, 1)
+
+        self.setLayout(mainLayout)
         self.resize(1536, 864)
+        self.setFixedSize(self.size())
+        
+    def displayRandomImage(self):
+        self.setAppBackground('./resource/back.png')
+        characterFolder = './resource/clothes'
+
+        try:
+            images = [os.path.join(characterFolder, f) for f in os.listdir(characterFolder) if os.path.isfile(os.path.join(characterFolder, f))]
+            
+            if images:
+                randomCharacter = random.choice(images)
+                self.setCharacterImage(randomCharacter)
+
+        except Exception as e:
+            print(f"Error loading random character image: {e}")
+
+    def setCharacterImage(self, imagePath):
+        self.setAppForeground(imagePath)
+        
+    def selectImage(self):
+        options = QFileDialog.Options()
+        fileName, _ = QFileDialog.getOpenFileName(self, "Select Image", "./resource/clothes", "All Files (*);;Image Files (*.png;*.jpg)", options=options)
+        if fileName:
+            self.setAppForeground(fileName)
+    
+    def setAppBackground(self, imagePath):
+        backgroundImage = QImage(imagePath)
+        self.backgroundPixmap = QPixmap.fromImage(backgroundImage)
+        self.update()
+
+    def setAppForeground(self, imagePath):
+        image = QImage(imagePath)
+
+        self.foregroundPixmap = QPixmap.fromImage(image)
+        self.update()
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        if self.backgroundPixmap:
+            painter.drawPixmap(self.rect(), self.backgroundPixmap)
+        if self.foregroundPixmap:
+            painter.drawPixmap(0, 0, self.foregroundPixmap)
+        super().paintEvent(event)
     
     def playSound(self, audioPath):
         if os.path.exists(audioPath):
@@ -168,11 +219,6 @@ class ChatBotUI(QWidget):
         super().resizeEvent(event)
         new_height = self.size().height() // 4 
         self.chatHistory.setMaximumHeight(new_height)
-
-    def paintEvent(self, event):
-        painter = QPainter(self)
-        painter.drawPixmap(self.rect(), self.pixmap)
-        super().paintEvent(event)
 
 if __name__ == '__main__':
     try:
