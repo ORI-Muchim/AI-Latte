@@ -43,7 +43,7 @@ class ApiThread(QThread):
         self.message = message
 
     def run(self):
-        if "섹스" in self.message:
+        if "섹스" in self.message and random.random() < 0.3:
             responses = ["뭐? 섹스? 야! 섹스? 너 방금 섹스라고 했냐?", "섹스? 야, 섹스? 너 방금 섹스라고 했냐?"]
             response = random.choice(responses)
         else:
