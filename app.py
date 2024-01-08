@@ -62,7 +62,6 @@ class ChatBotUI(QWidget):
         self.currentText = ""
         self.currentHtml = ""
         self.soundPlayer = QMediaPlayer()
-        self.foregroundPixmap = None
         self.faceImagePath = './resource/face/normal.png'
         self.displayRandomImage()
 
@@ -120,7 +119,7 @@ class ChatBotUI(QWidget):
         self.setFixedSize(self.size())
         
     def displayRandomImage(self):
-        self.setAppBackground('./resource/back.png')
+        self.setAppBackground('./resource/background/sea.png')
         characterFolder = './resource/clothes'
         faceImage = './resource/face/normal.png'
 
