@@ -93,6 +93,11 @@ class ChatBotUI(QWidget):
         if status == QMediaPlayer.EndOfMedia:
             self.player.setPosition(0)
             self.player.play()
+            
+    def invert_icon_colors(self, icon_path):
+        image = QImage(icon_path)
+        image.invertPixels(QImage.InvertRgb)
+        return QPixmap.fromImage(image)
 
 
     def initUI(self):
@@ -120,8 +125,13 @@ class ChatBotUI(QWidget):
 
         topLayout = QHBoxLayout()
         self.selectImageButton = QPushButton(self)
-        self.selectImageButton.setIcon(QIcon('./resource/select.png'))
-        self.selectImageButton.setIconSize(QSize(75, 75))
+
+        inverted_icon = self.invert_icon_colors('./resource/select.png')
+        self.selectImageButton.setIcon(QIcon(inverted_icon))
+        self.selectImageButton.setIconSize(QSize(75, 75))  # Adjust size as needed
+
+        self.selectImageButton.setStyleSheet("background-color: rgba(0, 0, 0, 127); border: none;")
+
         self.selectImageButton.clicked.connect(self.selectImage)
         topLayout.addWidget(self.selectImageButton, 0, Qt.AlignRight | Qt.AlignTop)
         mainLayout.addLayout(topLayout)
