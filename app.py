@@ -9,6 +9,8 @@ import undetected_chromedriver as uc
 from inference import voice_gen
 from get_model import download_model_if_not_exists
 
+from get_emotion import get_emotion_from_response
+
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtMultimedia import *
@@ -27,23 +29,28 @@ print(result)
 class VoiceGenThread(QThread):
     finished = pyqtSignal(str)
 
+
     def __init__(self, response):
         super().__init__()
         self.response = response
+
 
     def run(self):
         audioPath = voice_gen(self.response)
         self.finished.emit(audioPath)
 
+
 class ApiThread(QThread):
     responseSignal = pyqtSignal(str)
+
 
     def __init__(self, message):
         super().__init__()
         self.message = message
 
+
     def run(self):
-        if "섹스" in self.message and random.random() < 0.3:
+        if "섹스" in self.message and random.random() < 0.5:
             responses = ["뭐? 섹스? 야! 섹스? 너 방금 섹스라고 했냐?", "섹스? 야, 섹스? 너 방금 섹스라고 했냐?"]
             response = random.choice(responses)
         else:
@@ -52,7 +59,8 @@ class ApiThread(QThread):
             response = '야, 씹덕. 여기서 뭐하고 있어.'
         
         self.responseSignal.emit(response)
-        print("응답:", response, end="")
+        print("응답:", response)
+
 
 class ChatBotUI(QWidget):
     def __init__(self):
@@ -62,8 +70,15 @@ class ChatBotUI(QWidget):
         self.currentText = ""
         self.currentHtml = ""
         self.soundPlayer = QMediaPlayer()
+        self.currentCharacterImagePath = './resource/clothes/black.png'
         self.faceImagePath = './resource/face/normal.png'
+        self.selectedCharacterImagePath = './resource/clothes/black.png'
+        self.currentEmotion = "normal"
+        self.foregroundPixmap = QPixmap(self.currentCharacterImagePath)
+        self.updateFaceImage(self.currentEmotion)
+        self.selectedImageHistory = []
         self.displayRandomImage()
+
 
     def initMediaPlayer(self):
         self.player = QMediaPlayer()
@@ -73,10 +88,12 @@ class ChatBotUI(QWidget):
         self.player.mediaStatusChanged.connect(self.repeatMusic)
         self.player.play()
 
+
     def repeatMusic(self, status):
         if status == QMediaPlayer.EndOfMedia:
             self.player.setPosition(0)
             self.player.play()
+
 
     def initUI(self):
         self.setWindowTitle('AI-Latte Chat UI')
@@ -87,7 +104,6 @@ class ChatBotUI(QWidget):
 
         fontInfo = QFontInfo(self.font())
         print("Current font:", fontInfo.family(), "Size:", fontInfo.pointSize())
-        print("\n")
 
         text_style = "background-color: rgba(0, 0, 0, 127); color: white; border: none;"
 
@@ -103,7 +119,9 @@ class ChatBotUI(QWidget):
         mainLayout.addWidget(self.userInput, 1)
 
         topLayout = QHBoxLayout()
-        self.selectImageButton = QPushButton("Select Image", self)
+        self.selectImageButton = QPushButton(self)
+        self.selectImageButton.setIcon(QIcon('./resource/select.png'))
+        self.selectImageButton.setIconSize(QSize(75, 75))
         self.selectImageButton.clicked.connect(self.selectImage)
         topLayout.addWidget(self.selectImageButton, 0, Qt.AlignRight | Qt.AlignTop)
         mainLayout.addLayout(topLayout)
@@ -118,46 +136,68 @@ class ChatBotUI(QWidget):
         self.resize(1536, 864)
         self.setFixedSize(self.size())
         
+
     def displayRandomImage(self):
         self.setAppBackground('./resource/background/sea.png')
         characterFolder = './resource/clothes'
-        faceImage = './resource/face/normal.png'
-
+        
         try:
             images = [os.path.join(characterFolder, f) for f in os.listdir(characterFolder) if os.path.isfile(os.path.join(characterFolder, f))]
             
             if images:
                 randomCharacter = random.choice(images)
-                self.setCharacterImage(randomCharacter, faceImage)
-
+                self.setCharacterImage(randomCharacter)
+                self.selectedCharacterImagePath = randomCharacter
+                
         except Exception as e:
             print(f"Error loading random character image: {e}")
 
-    def setCharacterImage(self, characterImagePath, faceImagePath):
-        characterImage = QImage(characterImagePath)
+
+    def setCharacterImage(self, characterImagePath):
+        self.selectedCharacterImagePath = characterImagePath
+        self.applyFaceToCharacter()
+
+
+    def applyFaceToCharacter(self):
+        characterImage = QImage(self.selectedCharacterImagePath)
+        if characterImage.isNull():
+            # print(f"Error loading character image from {self.selectedCharacterImagePath}")
+            return
         characterPixmap = QPixmap.fromImage(characterImage)
 
-        faceImage = QImage(faceImagePath)
+        faceImage = QImage(self.faceImagePath)
+        if faceImage.isNull():
+            # print(f"Error loading face image from {self.faceImagePath}")
+            return
+
         facePixmap = QPixmap.fromImage(faceImage)
+        x_position = 17
+        y_position = -120
 
         painter = QPainter(characterPixmap)
-
-        painter.drawPixmap(17, -120, facePixmap)
+        painter.drawPixmap(x_position, y_position, facePixmap)
         painter.end()
 
         self.foregroundPixmap = characterPixmap
+        print("Image loaded and applied successfully.")
         self.update()
-        
+
+
     def selectImage(self):
         options = QFileDialog.Options()
         fileName, _ = QFileDialog.getOpenFileName(self, "Select Image", "./resource/clothes", "All Files (*);;Image Files (*.png;*.jpg)", options=options)
         if fileName:
             self.setAppForeground(fileName)
+            self.selectedCharacterImagePath = fileName
+            self.selectedImageHistory.append(fileName)
+            # print("Selected Image History:", self.selectedImageHistory)
     
+
     def setAppBackground(self, imagePath):
         backgroundImage = QImage(imagePath)
         self.backgroundPixmap = QPixmap.fromImage(backgroundImage)
         self.update()
+
 
     def setAppForeground(self, imagePath):
         characterImage = QImage(imagePath)
@@ -167,27 +207,41 @@ class ChatBotUI(QWidget):
         facePixmap = QPixmap.fromImage(faceImage)
 
         painter = QPainter(characterPixmap)
-        painter.drawPixmap(20, -120, facePixmap)
+        painter.drawPixmap(17, -120, facePixmap)
         painter.end()
 
         self.foregroundPixmap = characterPixmap
         self.update()
 
+
     def paintEvent(self, event):
         painter = QPainter(self)
+
         if self.backgroundPixmap:
-            painter.drawPixmap(self.rect(), self.backgroundPixmap)
+            scaledBackground = self.backgroundPixmap.scaled(self.size(), Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+            painter.drawPixmap(self.rect(), scaledBackground)
+
         if self.foregroundPixmap:
-            painter.drawPixmap(0, 0, self.foregroundPixmap)
+            fgWidth = self.foregroundPixmap.width()
+            fgHeight = self.foregroundPixmap.height()
+            windowWidth = self.size().width()
+            windowHeight = self.size().height()
+            fgX = (windowWidth - fgWidth) // 2
+            fgY = (windowHeight - fgHeight) // 2
+
+            painter.drawPixmap(fgX, fgY, self.foregroundPixmap)
+
         super().paintEvent(event)
     
+
     def playSound(self, audioPath):
         if os.path.exists(audioPath):
             url = QUrl.fromLocalFile(audioPath)
             self.soundPlayer.setMedia(QMediaContent(url))
             self.soundPlayer.stateChanged.connect(lambda: self.deleteAudioFile(audioPath))
             self.soundPlayer.play()
-            
+         
+   
     def deleteAudioFile(self, audioPath):
         if self.soundPlayer.state() == QMediaPlayer.StoppedState:
             try:
@@ -195,6 +249,7 @@ class ChatBotUI(QWidget):
                 print(f"Deleted audio file: {audioPath}")
             except Exception as e:
                 print("")
+
 
     def sendMessage(self):
         message = self.userInput.text()
@@ -206,21 +261,49 @@ class ChatBotUI(QWidget):
             print("응답을 기다리는 중...")
             self.sendToApiAndReceiveResponse(message)
 
+
     def sendToApiAndReceiveResponse(self, message):
         self.apiThread = ApiThread(message)
         self.apiThread.responseSignal.connect(self.displayResponse)
         self.apiThread.start()
+
+
+    def updateFaceImage(self, emotion):
+        faceImageMap = {
+            "laugh": "./resource/face/laugh.png",
+            "laugh2": "./resource/face/laugh2.png",
+            "cry": "./resource/face/cry.png",
+            "hate": "./resource/face/hate.png",
+            "hate2": "./resource/face/hate2.png",
+            "hate3": "./resource/face/hate3.png",
+            "normal": "./resource/face/normal.png",
+            "littleshame": "./resource/face/littleshame.png",
+            "shame": "./resource/face/shame.png",
+            "supershame": "./resource/face/supershame.png",
+            "worry": "./resource/face/worry.png",
+            "disappointed": "./resource/face/disappointed.png",
+            "hmm": "./resource/face/hmm.png"
+        }
+        default_emotion = "normal"
+        self.faceImagePath = faceImageMap.get(emotion, faceImageMap[default_emotion])
+        self.currentEmotion = emotion
+        self.applyFaceToCharacter()
+
 
     def displayResponse(self, response):
         self.animateText("<span style='color: peachpuff;'>" + "권라떼: " + response + "</span>", "peachpuff")
         self.voiceThread = VoiceGenThread(response)
         self.voiceThread.finished.connect(self.playVoiceAfterDelay)
         self.voiceThread.start()
-        print()
-        
+
+        emotion = get_emotion_from_response(response)
+        QTimer.singleShot(1000, lambda: self.updateFaceImage(emotion))
+
+
     def playVoiceAfterDelay(self, audioPath):
         QTimer.singleShot(250, lambda: self.playSound(audioPath))
-        
+    
+    
     def animateText(self, text, color):
         self.currentHtml = self.chatHistory.toHtml()
         self.fullText = "<span style='color: {};'>{}</span>".format(color, text)
@@ -228,6 +311,7 @@ class ChatBotUI(QWidget):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.addLetter)
         self.timer.start(18)
+
 
     def addLetter(self):
         if self.textIndex < len(self.fullText):
@@ -237,10 +321,12 @@ class ChatBotUI(QWidget):
         else:
             self.timer.stop()
 
+
     def resizeEvent(self, event):
         super().resizeEvent(event)
         new_height = self.size().height() // 4 
         self.chatHistory.setMaximumHeight(new_height)
+
 
 if __name__ == '__main__':
     try:

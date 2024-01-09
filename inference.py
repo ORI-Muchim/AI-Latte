@@ -45,7 +45,6 @@ def voice_gen(response):
     stn_tst = get_text(response, hps)
     with torch.no_grad():
         timestamp = int(time.time())
-        print("음성 생성 중...", response)
         x_tst = stn_tst.to(device).unsqueeze(0)
         x_tst_lengths = torch.LongTensor([stn_tst.size(0)]).to(device)
         audio = net_g.infer(x_tst, x_tst_lengths, noise_scale=.667, noise_scale_w=0.8, length_scale=1)[0][0,0].data.cpu().float().numpy()
