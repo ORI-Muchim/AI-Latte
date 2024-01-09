@@ -96,7 +96,7 @@ class ChatBotUI(QWidget):
 
 
     def initUI(self):
-        self.setWindowTitle('AI-Latte Chat UI')
+        self.setWindowTitle('AI-Latte')
         self.pixmap = QPixmap('./resource/background/sea.png')
         self.setWindowIcon(QIcon('./resource/icon.png'))
         
