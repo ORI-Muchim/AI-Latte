@@ -21,6 +21,6 @@ def get_emotion_from_response(response):
         possible_emotions.extend(emotion_keywords.get(emotion, []))
 
     if "섹스" in response:
-        return "supershame"
+        return random.choice(["supershame", "hate"])
 
     return random.choice(possible_emotions) if possible_emotions else "normal"
