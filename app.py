@@ -83,7 +83,7 @@ class ChatBotUI(QWidget):
     def initMediaPlayer(self):
         self.player = QMediaPlayer()
         self.player.setMedia(QMediaContent(QUrl.fromLocalFile("./resource/bgm.wav")))
-        self.player.setVolume(5)
+        self.player.setVolume(7)
         
         self.player.mediaStatusChanged.connect(self.repeatMusic)
         self.player.play()
