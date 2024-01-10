@@ -2,6 +2,7 @@ import os
 import time
 import random
 import sys
+import re
 
 from gpt import start_chat_gpt, send_message, get_latest_response
 import undetected_chromedriver as uc
@@ -23,8 +24,8 @@ local_path = './models/latte/G_107000.pth'
 result = download_model_if_not_exists(url, local_path)
 print(result)
 
-#driver = uc.Chrome(enable_cdp_events=True)
-#start_chat_gpt(driver)
+driver = uc.Chrome(enable_cdp_events=True)
+start_chat_gpt(driver)
 
 class VoiceGenThread(QThread):
     finished = pyqtSignal(str)
@@ -54,9 +55,8 @@ class ApiThread(QThread):
             responses = ["뭐? 섹스? 야! 섹스? 너 방금 섹스라고 했냐?", "섹스? 야, 섹스? 너 방금 섹스라고 했냐?"]
             response = random.choice(responses)
         else:
-            #send_message(driver, self.message)
-            #response = get_latest_response(driver)
-            response = '야, 씹덕. 여기서 뭐하고 있어.'
+            send_message(driver, self.message)
+            response = get_latest_response(driver)
         
         self.responseSignal.emit(response)
         print("응답:", response)
@@ -128,7 +128,7 @@ class ChatBotUI(QWidget):
 
         inverted_icon = self.invert_icon_colors('./resource/select.png')
         self.selectImageButton.setIcon(QIcon(inverted_icon))
-        self.selectImageButton.setIconSize(QSize(75, 75))  # Adjust size as needed
+        self.selectImageButton.setIconSize(QSize(75, 75))
 
         self.selectImageButton.setStyleSheet("background-color: rgba(0, 0, 0, 127); border: none;")
 
@@ -300,9 +300,16 @@ class ChatBotUI(QWidget):
         self.applyFaceToCharacter()
 
 
+    def remove_bracketed_text(self, text):
+        pattern = r'\[.*?\]'
+        return re.sub(pattern, '', text)
+
+
     def displayResponse(self, response):
-        self.animateText("<span style='color: peachpuff;'>" + "권라떼: " + response + "</span>", "peachpuff")
-        self.voiceThread = VoiceGenThread(response)
+        cleaned_response = self.remove_bracketed_text(response)
+
+        self.animateText("<span style='color: peachpuff;'>" + "권라떼: " + cleaned_response + "</span>", "peachpuff")
+        self.voiceThread = VoiceGenThread(cleaned_response)
         self.voiceThread.finished.connect(self.playVoiceAfterDelay)
         self.voiceThread.start()
 
