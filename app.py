@@ -4,6 +4,7 @@ import random
 import sys
 import re
 
+from get_chromedriver import chromedriver_update
 from gpt import start_chat_gpt, send_message, get_latest_response
 import undetected_chromedriver as uc
 
@@ -23,6 +24,8 @@ local_path = './models/latte/G_107000.pth'
 
 result = download_model_if_not_exists(url, local_path)
 print(result)
+
+chromedriver_update()
 
 driver = uc.Chrome(enable_cdp_events=True)
 start_chat_gpt(driver)

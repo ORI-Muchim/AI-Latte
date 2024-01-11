@@ -18,3 +18,4 @@ webdriver_manager
 undetected_chromedriver
 selenium
 requests
+chromedriver-autoinstaller
