@@ -16,7 +16,7 @@ Onfire Games's Love Delivery Heroine Latte, An Unofficial Implementation of [Cha
 
 ## Prerequisites
 - **ChatGPT4**
-- A Windows / Linux / MacOS system with a minimum of `8GB` RAM.
+- A Windows / Linux system with a minimum of `8GB` RAM.
 - Python == 3.8
 - Anaconda installed.
 - PyTorch installed.
