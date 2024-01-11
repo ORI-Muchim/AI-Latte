@@ -1,3 +1,5 @@
+# Source: https://trading-for-chicken.tistory.com/19
+
 import os
 import chromedriver_autoinstaller as AutoChrome
 import shutil
