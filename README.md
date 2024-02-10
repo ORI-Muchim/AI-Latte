@@ -4,7 +4,7 @@
 
 ## If you need a resource file, I can provide it for research purposes. Discord: 오리무침#7777
 
-[한국어 README.md](./README_Korean.md)
+[한국어 README.md](./README_KOREAN.md)
 
 Onfire Games's Love Delivery Heroine Latte, An Unofficial Implementation of [ChatGPT](https://chat.openai.com/) and [MB-iSTFT-VITS](https://github.com/ORI-Muchim/MB-iSTFT-VITS-Korean)
 
