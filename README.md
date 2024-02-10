@@ -2,6 +2,8 @@
 
 # The repository is only accessible to people aged 19 and over. *PLEASE DO NOT CHECK* the repository for teenagers or children.
 
+## If you need a resource file, we can provide it for research purposes. Discord: 오리무침#7777
+
 [한국어 README.md](./README_Korean.md)
 
 Onfire Games's Love Delivery Heroine Latte, An Unofficial Implementation of [ChatGPT](https://chat.openai.com/) and [MB-iSTFT-VITS](https://github.com/ORI-Muchim/MB-iSTFT-VITS-Korean)
