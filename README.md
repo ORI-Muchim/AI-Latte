@@ -2,7 +2,7 @@
 
 # The repository is only accessible to people aged 19 and over. *PLEASE DO NOT CHECK* the repository for teenagers or children.
 
-## If you need a resource file, we can provide it for research purposes. Discord: 오리무침#7777
+## If you need a resource file, I can provide it for research purposes. Discord: 오리무침#7777
 
 [한국어 README.md](./README_Korean.md)
 
